@@ -86,6 +86,29 @@ class Esfera {
     }
 };
 
+class Camera {
+  
+  public:
+  float camX;  float camY;  float camZ;
+  float camRX; float camRY; float camRZ;
+  
+  Camera(float camX_, float camY_, float camZ_, float camRX_, float camRY_, float camRZ_) {
+      this->camX = camX_;   this->camY = camY_;   this->camZ = camZ_;
+      this->camRX = camRX_;   this->camRY = camRY_;   this->camRZ = camRZ_;
+  }
+
+    float matriz_camera[4][4];
+
+    void Camera_Array(float camx, float camy, float camz, float camrx, float camry, float camrz) {
+    
+        matriz_camera[0][0] = 1;    matriz_camera[0][1] = 0;    matriz_camera[0][2] = 0;    matriz_camera[0][3] = -camx;
+        matriz_camera[1][0] = 0;    matriz_camera[1][1] = 1;    matriz_camera[1][2] = 0;    matriz_camera[1][3] = -camy;
+        matriz_camera[2][0] = 0;    matriz_camera[2][1] = 0;    matriz_camera[2][2] = 1;    matriz_camera[2][3] = -camz;
+        matriz_camera[3][0] = 0;    matriz_camera[3][1] = 0;    matriz_camera[3][2] = 0;    matriz_camera[3][3] = 1;
+}
+    
+};
+
 int main()
 {
     int menu = 0;
@@ -106,7 +129,7 @@ cin>>menu_choice;
     
     cout<<"Hello World, Se liga só nessa porrenha aqui:\n\n";
     
-    Esfera* Bola = new Esfera(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.11,0.22,0.33,0.44,0.55,0.66,0.77);
+    Esfera* Bola = new Esfera(0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.80,0.90,0.11,0.22,0.33,0.44,0.55,0.66,0.77);
     
     cout<<"Esfera - Valores\n";
     Bola->print();
