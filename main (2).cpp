@@ -13,6 +13,7 @@ class Esfera {
     float m20;    float m21;    float m22;    float m23;
     float m30;    float m31;    float m32;    float m33;
     
+    
     Esfera(float m00_, float m01_, float m02_, float m03_,
            float m10_, float m11_, float m12_, float m13_,
            float m20_, float m21_, float m22_, float m23_,
@@ -89,13 +90,12 @@ class Esfera {
 class Camera {
   
   public:
-  float camX;  float camY;  float camZ;
+  float matriz_camera[4][4];
   
-  Camera(float camX_, float camY_, float camZ_) {
-      this->camX = camX_;   this->camY = camY_;   this->camZ = camZ_;
+  Camera() {
+      Camera_Initialize();
   }
 
-    float matriz_camera[4][4];
     
     void Camera_Initialize() {
         matriz_camera[0][0] = 1;    matriz_camera[0][1] = 0;    matriz_camera[0][2] = 0;    matriz_camera[0][3] = 0;
@@ -105,26 +105,61 @@ class Camera {
     }
 
     void Camera_Array_Translação(float ctx, float cty, float ctz) {
-    
-        matriz_camera[0][0] = 1;    matriz_camera[0][1] = 0;    matriz_camera[0][2] = 0;    matriz_camera[0][3] = -(camX + ctx);
-        matriz_camera[1][0] = 0;    matriz_camera[1][1] = 1;    matriz_camera[1][2] = 0;    matriz_camera[1][3] = -(camY + cty);
-        matriz_camera[2][0] = 0;    matriz_camera[2][1] = 0;    matriz_camera[2][2] = 1;    matriz_camera[2][3] = -(camZ + ctz);
-        matriz_camera[3][0] = 0;    matriz_camera[3][1] = 0;    matriz_camera[3][2] = 0;    matriz_camera[3][3] = 1;
+        float matriz_translacao[4][4];
+        //monta uma matriz nova com os valores de translação
+        matriz_translacao[0][0] = 0;    matriz_translacao[0][1] = 0;    matriz_translacao[0][2] = 0;    matriz_translacao[0][3] = -(ctx);
+        matriz_translacao[1][0] = 0;    matriz_translacao[1][1] = 0;    matriz_translacao[1][2] = 0;    matriz_translacao[1][3] = -(cty);
+        matriz_translacao[2][0] = 0;    matriz_translacao[2][1] = 0;    matriz_translacao[2][2] = 0;    matriz_translacao[2][3] = -(ctz);
+        matriz_translacao[3][0] = 0;    matriz_translacao[3][1] = 0;    matriz_translacao[3][2] = 0;    matriz_translacao[3][3] = 0;
         
+        //matriz incorreta de proposito
+    
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                matriz_camera[i][j];
+            
+                for (int k = 0; k < 4; k++) {
+                    matriz_camera[i][j] +=  matriz_camera[k][j] * matriz_translacao[i][k];
+            }
+        }
+    }
 }
 
     void Camera_Array_Rotação(float crx, float cry, float crz) {
-        matriz_camera[0][0] = (cos(cry) * cos(crz));
-        matriz_camera[0][1] = (sin(crx) * sin(cry) * cos(crz) - cos(crx) * sin(crz));
-        matriz_camera[0][2] = (cos(crx) * sin(cry) * cos(crz) + sin(crx) * sin(crz));
         
-        matriz_camera[1][0] = (cos(cry) * sin(crz));
-        matriz_camera[1][1] = (sin(crx) * sin(cry) * sin(crz) + cos(crx) * cos(crz));
-        matriz_camera[1][2] = (cos(crx) * sin(cry) * sin(crz) - sin(crx) * cos(crz));
+        //cria uma matriz nova para a rotação
+        float matriz_rotação[4][4];
+        //E CUIDA QUE O ANGULO TEM QUE SER O INVERSO (-)
         
-        matriz_camera[2][0] = -sin(cry);
-        matriz_camera[2][1] = (sin(crx) * cos(cry));
-        matriz_camera[2][2] = (cos(crx) * cos(cry));
+        matriz_rotação[0][0] = 0;   matriz_rotação[0][1] = 0;   matriz_rotação[0][2] = 0;   matriz_rotação[0][3] = 0;
+        matriz_rotação[1][0] = 0;   matriz_rotação[1][1] = 0;   matriz_rotação[1][2] = 0;   matriz_rotação[1][3] = 0;
+        matriz_rotação[2][0] = 0;   matriz_rotação[2][1] = 0;   matriz_rotação[2][2] = 0;   matriz_rotação[2][3] = 0;
+        matriz_rotação[3][0] = 0;   matriz_rotação[3][1] = 0;   matriz_rotação[3][2] = 0;   matriz_rotação[3][3] = 0;
+        
+        matriz_rotação[0][0] = (cos(cry) * cos(crz));
+        matriz_rotação[0][1] = (sin(crx) * sin(cry) * cos(crz) - cos(crx) * sin(crz));
+        matriz_rotação[0][2] = (cos(crx) * sin(cry) * cos(crz) + sin(crx) * sin(crz));
+        
+        matriz_rotação[1][0] = (cos(cry) * sin(crz));
+        matriz_rotação[1][1] = (sin(crx) * sin(cry) * sin(crz) + cos(crx) * cos(crz));
+        matriz_rotação[1][2] = (cos(crx) * sin(cry) * sin(crz) - sin(crx) * cos(crz));
+        
+        matriz_rotação[2][0] = -sin(cry);
+        matriz_rotação[2][1] = (sin(crx) * cos(cry));
+        matriz_rotação[2][2] = (cos(crx) * cos(cry));
+        
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                matriz_camera[i][j];
+            
+                for (int k = 0; k < 4; k++) {
+                    matriz_camera[i][j] += matriz_camera[k][j] * matriz_rotação[i][k];
+            }
+        }
+    }
+        
+        
+
     }
     
     void Camera_Array_Print() {
@@ -135,11 +170,13 @@ class Camera {
                 cout<<endl;
         }
     }
-    
 };
 
 int main()
 {
+    Esfera* Bola = new Esfera(0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.80,0.90,0.11,0.22,0.33,0.44,0.55,0.66,0.77);
+    Camera* Tela = new Camera();
+    
     int menu = 0;
     int menu_choice = 0;
     
@@ -158,9 +195,6 @@ cin>>menu_choice;
     
     cout<<"Hello World, Se liga só nessa porrenha aqui:\n\n";
     
-    Esfera* Bola = new Esfera(0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.80,0.90,0.11,0.22,0.33,0.44,0.55,0.66,0.77);
-    Camera* Tela = new Camera(0,0,0);
-    
     cout<<"Esfera - Valores\n";
     Bola->print();
     
@@ -177,11 +211,10 @@ cin>>menu_choice;
     Bola->Escala(6,6,6);
     
     cout<<"Camera - Matriz\n";
-    Tela->Camera_Initialize();
     Tela->Camera_Array_Print();
     
     cout<<"Camera - Translação\n";
-    Tela->Camera_Array_Translação(0,2,2);
+    Tela->Camera_Array_Translação(1,2,2);
     Tela->Camera_Array_Print();
     
     cout<<"Camera - Rotação\n";
